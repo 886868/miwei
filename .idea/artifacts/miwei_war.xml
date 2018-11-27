@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="miwei:war">
+    <output-path>$PROJECT_DIR$/output</output-path>
+    <root id="archive" name="miwei.war">
+      <element id="artifact" artifact-name="miwei:war exploded" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="miwei" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

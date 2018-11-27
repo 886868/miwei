@@ -1,0 +1,105 @@
+@CHARSET "UTF-8";
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="email"] {
+ margin:2px 0;
+ padding: 3px;
+ 
+ border: 1px solid; 
+ border-color: #D7D7D7;
+ 
+ background-color:#f5f5f7;
+ border: 1px #CCCCCC solid;
+ font-size: 12px;
+ border-radius:5px;
+ scrollbar-arrow-color: #CCCCCC;
+ scrollbar-darkshadow-color:ffffff;
+ scrollbar-face-color:#ffffff;
+ scrollbar-track-color:#ffffff;
+ scrollbar-highlight-color: #ffffff;
+ scrollbar-shadow-color:#eeeee4
+}
+input:focus {
+	border-radius: 5px 5px 5px 5px;
+	border:solid 1px #ED7E47;
+	background:#FFFFFF;
+}
+input[type="text"].search {
+ border: 1px #BDB37B solid;
+ border-radius:2px;
+ background-color: #EEEDDB;
+}
+.loginup-main-div {
+	width:1024px; 
+	height:472px; 
+	margin-top:200px;
+	margin-left:auto;
+	margin-right:auto;
+	background-image: url(images/login/loginbg.jpg);
+	
+}
+
+.loginup-content-div {
+	left: 0px; 
+	top: 70px; 
+	width: 1024px; 
+	height: 472px; 
+	background-color: #edeeec;
+	border-style: solid; 
+	border-color: #dddddd;
+	border-width: 1px 1px 1px 1px;
+}
+
+.loginup-form {
+	margin-top: 5px;
+	margin-right: 5px;
+	color:#ffffff;
+	left: 778px; 
+	top: 6px; 
+	width: 265px; 
+	height: 488px; 
+	float:right;
+}
+
+.loginup-form-table {
+  border-collapse:separate;
+  border-spacing:0px 10px;
+  margin-left: 50px;
+}
+
+.loginup-form-copyright {
+  margin-left: -300px; 
+  margin-top: 75px; 
+  width: 200px; 
+  height: 22px; 
+  font-family: "微软雅黑"; 
+  font-size: 14px; 
+  color: #ffffff;
+}
+
+div input[type=text] {
+  width: 100%;
+  height: 40px;
+  margin-top: 25px;
+  margin-left: -25px;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  background: #fff;
+  border:1px solid #1d71eb;
+  color: #1d71eb;
+  outline:blue;
+}
+
+div input[type=password] {
+  width: 100%;
+  height: 40px;
+  margin-top: -10px;
+  margin-left: -25px;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  background: #fff;
+  border:1px solid #1d71eb;
+  color: #1d71eb;
+  outline:blue;
+}

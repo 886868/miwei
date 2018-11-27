@@ -1,0 +1,15 @@
+.search-line1{
+    display:inline-block;
+} 
+
+.tagTable_String{
+    padding-bottom: 5px;
+    background-color: #addaf9;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #000000;
+    font-size: 14px;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}

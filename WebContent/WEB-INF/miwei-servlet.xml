@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 注意此处的命名空间，如要用到Ioc，事务，mvc等功能的话，需要加入特定的xsd和命名空间 -->
+<!-- 简单讲。。。复制粘贴即可 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util" xmlns:task="http://www.springframework.org/schema/task"
+    xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+    xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx.xsd
+            http://www.springframework.org/schema/util 
+            http://www.springframework.org/schema/util/spring-util.xsd
+            http://www.springframework.org/schema/task 
+            http://www.springframework.org/schema/task/spring-task.xsd
+            http://cxf.apache.org/jaxws 
+            http://cxf.apache.org/schemas/jaxws.xsd
+            http://www.springframework.org/schema/data/mongo 
+            http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+
+    <!-- 设置 spring 能够自动注入的包 -->
+    <context:component-scan base-package="com" />
+    <!-- <mvc:annotation-driven /> -->
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes" value = "application/json;charset=UTF-8" />
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!-- 设置拦截器 -->
+
+    <!-- <mvc:interceptors> <mvc:interceptor> <mvc:mapping path="/*/*"/> 
+        <mvc:exclude-mapping path="/user/login.do"/> <mvc:exclude-mapping path="/user/index.do"/> 
+        <mvc:exclude-mapping path="/user/im.do"/> <mvc:exclude-mapping path="/user/checkCode.do"/> 
+        <mvc:exclude-mapping path="/user/webquit.do"/> <mvc:exclude-mapping path="/user/validateUser.do"/> 
+        <mvc:exclude-mapping path="/user/isUserExsit.do"/> <mvc:exclude-mapping path="/user/revise.do"/> 
+        <mvc:exclude-mapping path="/user/getValidatorNum.do"/> <mvc:exclude-mapping 
+        path="/user/errUrl.do"/> <mvc:exclude-mapping path="/user/error.do"/> <bean 
+        class="com.comm.util.interceptor.LoginInterceptor" /> </mvc:interceptor> 
+        </mvc:interceptors> -->
+
+    <!-- 获取 jdbc.properties -->
+    <context:property-placeholder
+        location="file:/var/webapp/miwei/conf/jdbc.properties" />
+
+    <!-- spring 任务调度注解 -->
+    <!-- <task:annotation-driven/> -->
+    <task:executor id="executorWithCallerRunsPolicy"
+        pool-size="5-25" queue-capacity="100" rejection-policy="CALLER_RUNS" />
+    <task:annotation-driven executor="executorWithCallerRunsPolicy" />
+
+    <!-- c3p0 -->
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+        destroy-method="close">
+        <property name="driverClass">
+            <value>${jdbc.driverClassName}</value>
+        </property>
+        <property name="jdbcUrl">
+            <value>${jdbc.url}</value>
+        </property>
+        <property name="user">
+            <value>${jdbc.username}</value>
+        </property>
+        <property name="password">
+            <value>${jdbc.password}</value>
+        </property>
+        <property name="acquireIncrement">
+            <value>5</value>
+        </property>
+        <property name="autoCommitOnClose">
+            <value>false</value>
+        </property>
+        <property name="initialPoolSize">
+            <value>5</value>
+        </property>
+        <property name="minPoolSize">
+            <value>5</value>
+        </property>
+        <property name="maxPoolSize">
+            <value>50</value>
+        </property>
+        <property name="maxStatements">
+            <value>0</value>
+        </property>
+        <property name="maxStatementsPerConnection">
+            <value>100</value>
+        </property>
+        <property name="idleConnectionTestPeriod">
+            <value>18000</value>
+        </property>
+        <property name="numHelperThreads">
+            <value>3</value>
+        </property>
+        <property name="testConnectionOnCheckin">
+            <value>true</value>
+        </property>
+        <property name="automaticTestTable">
+            <value>C3P0TestTable</value>
+        </property>
+        <property name="maxIdleTime">
+            <value>25000</value>
+        </property>
+        <property name="testConnectionOnCheckout">
+            <value>true</value>
+        </property>
+    </bean>
+    <!-- c3p0 -->
+
+    <!-- 配置 hibernate -->
+    <!-- 设置 Hibernate的 SessionFaction -->
+    <!-- 在hibernate中，所有的操作都需要通过session来完成，而session是由sessionFactory来生成的 -->
+    <!-- 注：Hibernate 的 session 与 servletSession 不是同一概念 -->
+    <bean id="sessionFactory"
+        class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+
+        <!-- <property name="annotatedClasses"> <list> <value>com.comm.model.User</value> 
+            </list> </property> -->
+        <!-- hibernate注解配置 -->
+        <!-- 会自动读取com.comm.model中标有 @Entity 注解的类，无需手动创建此类实例 -->
+        <property name="packagesToScan">
+            <list>
+                <value>com.comm.model</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <!-- 以下是两种不同的方式来加载 Hibernate 参数，根据使用习惯来选择 -->
+            <!-- 第一种 -->
+            <!-- <props> <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop> 
+                <prop key="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</prop> 
+                <prop key="hibernate.show_sql">true</prop> <prop key="hibernate.hbm2ddl.auto">create</prop> 
+                </props> -->
+            <!-- 第二种 -->
+            <value>
+                hibernate.dialect=org.hibernate.spatial.dialect.mysql.MySQLSpatialDialect
+                hibernate.show_sql=false
+                <!-- 如果将此项设置为 create 则每次启动或者 JUnit 测试时，会重建表！注意！ -->
+                <!-- hibernate.hbm2ddl.auto=update -->
+            </value>
+        </property>
+    </bean>
+    <!-- 配置 事务能以注解的形式使用 @Transaction -->
+    <tx:annotation-driven transaction-manager="txManager" />
+    <!-- 配置 事务 ，事务需要配合sessionFactory 使用，上文中已配置 -->
+    <bean id="txManager"
+        class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <!-- 配置 view 的前缀和后缀 -->
+    <!-- 如 在后台希望跳转到 /WEB-INF/jsp/abc.jsp, 只需要注明 "abc"即可 -->
+    <!-- 例 return new ModelAndView("start") -->
+    <bean
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+    <!-- <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver"> 
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/> 
+        <property name="prefix" value="/WEB-INF/jsp/"/> <property name="suffix" value=".jsp"/> 
+        </bean> -->
+    <bean
+        class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean
+                    class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <bean class="org.springframework.http.MediaType">
+                                <constructor-arg index="0"
+                                    value="text" />
+                                <constructor-arg index="1"
+                                    value="plain" />
+                                <constructor-arg index="2"
+                                    value="UTF-8" />
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+                <bean
+                    class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean
+        class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver">
+        <property name="messageConverters">
+            <list>
+                <bean
+                    class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+                <bean  
+                    class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <bean class="org.springframework.http.MediaType">
+                                <constructor-arg index="0" value="text" />
+                                <constructor-arg index="1" value="plain" />
+                                <constructor-arg index="2" value="UTF-8" />
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+                <bean
+                    class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 指定所上传文件的总大小不能超过200KB。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->
+        <!--<property name="maxUploadSize" value="20000000" />-->
+    </bean>
+
+    <!-- SpringMVC在超出上传文件限制时，会抛出org.springframework.web.multipart.MaxUploadSizeExceededException -->
+    <!-- 该异常是SpringMVC在检查上传的文件信息时抛出来的，而且此时还没有进入到Controller方法中 -->
+    <bean id="exceptionResolver"
+        class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <!-- 遇到MaxUploadSizeExceededException异常时，自动跳转到/WEB-INF/jsp/error_fileupload.jsp页面 -->
+                <prop
+                    key="org.springframework.web.multipart.MaxUploadSizeExceededException">error_fileupload</prop>
+            </props>
+        </property>
+    </bean>
+</beans>

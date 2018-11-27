@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <appender name="debugappender" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/var/log/miwei/miwei_backserver.log"/>
+        <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
+        <param name="Encoding" value="UTF-8"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %m (%F:%M:%L)%n"/>
+        </layout>
+    </appender>
+
+    <logger name="com.comm">
+        <level value="debug" />
+        <appender-ref ref="debugappender" />
+    </logger>
+    <logger name="com.mchange">
+        <level value="info" />
+        <appender-ref ref="debugappender" />
+    </logger>
+    <logger name="org.apache">
+        <level value="info" />
+        <appender-ref ref="debugappender" />
+    </logger>
+    <logger name="org.springframework">
+        <level value="info" />
+        <appender-ref ref="debugappender" />
+    </logger>
+<!--     <logger name="org.hibernate"> -->
+<!--         <level value="info" /> -->
+<!--         <appender-ref ref="debugappender" /> -->
+<!--     </logger> -->
+
+</log4j:configuration>
